@@ -6,51 +6,49 @@ interface ContainerProps {
   name: string;
 }
 
-//const ExploreContainer: React.FC<ContainerProps> = ({ name }) =>
-class ExploreContainer extends Component<ContainerProps> {
-
-  
-  componentDidMount() {
-    this.gesture.enable();
+export default class ExploreContainer extends Component<ContainerProps> {
+  myRef: any;
+  containerRef: any;
+  constructor(props: any) {
+    super(props);
+    this.myRef = React.createRef();
+    this.containerRef = React.createRef();
   }
 
+  componentDidMount() {
+    const gesture: Gesture = createGesture({
+      el: this.containerRef.current!,
+      threshold: 15,
+      gestureName: 'my-gest',
+      onMove: (detail: any) => {
+        console.log('test');
+        this.onMove(detail);
+      }
+    });
+    gesture.enable();
+  }
 
-  pg:any = document.querySelector('.ppp');
-  gesture: Gesture = createGesture({
-    el: document.querySelector('.container')!,
-    threshold: 15,
-    gestureName: 'my-gest',
-    onMove: (detail) => {
-      console.log('test');
-      //this.onMove(detail)
-    }
-  });
-
-  onMove = (detail: any) => {
+  onMove(detail: any) {
     console.log('IN IN IN MOVE!');
     const type = detail.type;
     const currentX = detail.currentX;
     const deltaX = detail.deltaX;
     const velocityX = detail.velocityX;
-    //let pg = document.querySelector('p');
-    this.pg.innerHTML = `
+    this.myRef.current.innerHTML = `
     <div>Type: ${type}</div>
     <div>Current X: ${currentX}</div>
     <div>Delta X: ${deltaX}</div>
     <div>Velocity X: ${velocityX}</div>
-  `
+  `;
   }
 
   render() {
     return (
-      <div className="container">
+      <div ref={this.containerRef}>
         <strong>{this.props.name}</strong>
         <p>click and drag anywhere on this page</p>
-        <p className="ppp"></p>
+        <p ref={this.myRef} />
       </div>
     );
   }
-
-};
-
-export default ExploreContainer;
+}
